@@ -20,8 +20,8 @@ class App {
       this.addSpotLight();
       this.addRectLight();
   
-      //this.setupARToolkitContext();
-      //this.setupARToolkitSource();
+      this.setupARToolkitContext();
+      this.setupARToolkitSource();
       this.mapMarkersWithMeshes();
   
       this.animate();
@@ -33,9 +33,6 @@ class App {
       this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       this.renderer.setClearColor(0x000000, 0);
       this.renderer.setSize(640, 480);
-  
-      this.renderer.shadowMap.enabled = true;
-      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       console.log('document',document.body)
       document.body.appendChild(this.renderer.domElement);
       //document.body.appendChild(this.renderer.domElement);
@@ -112,21 +109,6 @@ class App {
         this.onResize();
       });
     }
-  
-    getTourus() {
-      const mesh = new THREE.Mesh(new THREE.TorusBufferGeometry(10, 3, 16, 100), new THREE.MeshPhysicalMaterial({
-        color: 0xff00ff,
-        metalness: .58,
-        emissive: '#000000',
-        roughness: .18,
-      }));
-  
-      mesh.scale.set(.1, .1, .1)
-      mesh.position.set(0, 2, 0);
-  
-      return mesh;
-    }
-  
     getIcosahedron(color = 0x00ff00) {
       const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 0), new THREE.MeshPhysicalMaterial({
         color,
@@ -159,13 +141,9 @@ class App {
 
     const texture = new THREE.CanvasTexture( canvas );
     const material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} )
-    const material1 = new THREE.MeshPhongMaterial({
-      color: 0xFF0000,    // red (can also use a CSS color string here)
-      flatShading: true,
-    });
     
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry( 5, 5, 5 ), material);
-    console.log('HAHAAHH')
+    
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry( 3, 5, 5 ), material);
     mesh.position.set(0, 2, 0);
   
     return mesh;
@@ -203,10 +181,9 @@ class App {
         markerRoot.name = 'LAME'
         this.scene.add(markerRoot);
   
-        /*new THREEx.ArMarkerControls(this.arToolkitContext, markerRoot, {
-          type: 'pattern', patternUrl: './pattern1.patt','Access-Control-Allow-Origin':'*',
-        })*/
-        console.log('ADDING')
+        var x = new THREEx.ArMarkerControls(this.arToolkitContext, markerRoot, {
+          type: 'pattern', patternUrl: './pattern1.patt'
+        })
         //markerRoot.add(pattern.mesh);
       });
     }
@@ -225,12 +202,13 @@ class App {
   
       //this.patterns[0].mesh.rotation.y += .05;
   
-      this.patterns[0].mesh.rotation.y -= .008;
+      //this.patterns[0].mesh.rotation.y -= .008;
   
   
-      /*if (this.arToolkitSource && this.arToolkitSource.ready) {
+      if (this.arToolkitSource && this.arToolkitSource.ready) {
+        console.log('ARE WE READY')
         this.arToolkitContext.update(this.arToolkitSource.domElement);
-      }*/
+      }
       this.patterns[0].mesh.material.map.needsUpdate = true;
       this.angle += this.velocity;
   
