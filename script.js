@@ -152,7 +152,7 @@ class App {
     getHole() {
       const group = new THREE.Group();
       const cube = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), new THREE.MeshPhysicalMaterial({ color: 0xffffff, side: THREE.BackSide, transparent: true }));
-      cube.position.y = -1;
+      cube.position.y = -1
   
       group.add(cube);
   
