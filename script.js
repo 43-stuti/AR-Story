@@ -34,7 +34,7 @@ class App {
       this.renderer.setClearColor(0x000000, 0);
       this.renderer.setSize(640, 480);
       console.log('document',document.body)
-      document.body.appendChild(this.renderer.domElement);
+      document.body.appendChild(this.renderer.domElement)
       //document.body.appendChild(this.renderer.domElement);
     }
   
