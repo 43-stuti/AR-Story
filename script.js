@@ -14,7 +14,7 @@ class App {
         mesh: this.getSphere()
       }];
   
-      this.createScene();
+      this.createScene()
       this.createCamera();
       this.addAmbientLight();
       this.addSpotLight();
