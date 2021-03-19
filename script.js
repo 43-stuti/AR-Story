@@ -25,8 +25,8 @@ class App {
       this.addSpotLight();
       this.addRectLight();
   //marker set up
-      //this.setupARToolkitContext();
-      //this.setupARToolkitSource();
+      this.setupARToolkitContext();
+      this.setupARToolkitSource();
       this.mapMarkersWithMeshes();
   
       this.animate();
@@ -96,6 +96,7 @@ class App {
   
     setupARToolkitContext() {
       this.arToolkitContext = new THREEx.ArToolkitContext({
+        debug: true,
         cameraParametersUrl: 'https://iondrimba.github.io/augmented-reality/public/data/camera_para.dat',
         detectionMode: 'mono'
       });
@@ -186,10 +187,10 @@ class App {
         markerRoot.name = 'LAME'
         this.scene.add(markerRoot);
   
-        /*var x = new THREEx.ArMarkerControls(this.arToolkitContext, markerRoot, {
+        var x = new THREEx.ArMarkerControls(this.arToolkitContext, markerRoot, {
           type: 'pattern', patternUrl: './pattern1.patt'
-        })*/
-        //markerRoot.add(pattern.mesh);
+        })
+        markerRoot.add(pattern.mesh);
       });
     }
   
@@ -216,7 +217,7 @@ class App {
       }
       this.patterns[0].mesh.material.map.needsUpdate = true;
       this.angle += this.velocity;
-  
+       console.log(this.scene.children)
       requestAnimationFrame(this.animate.bind(this));
     }
   }
