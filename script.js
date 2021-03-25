@@ -8,12 +8,14 @@ class App {
       this.icosahedron = this.getIcosahedron(0xff005c);
       this.velocity = .08;
       this.angle = 0;
-  
+      this.markerRoot = new THREE.Group();
       this.patterns = [{
         id: 'pattern1',
         mesh: this.getSphere()
       }];
-  
+      this.isRootAdded = false;
+      this.oldPosX;
+      this.oldPosY;
       this.createScene()
       this.createCamera();
       this.addAmbientLight();
@@ -91,7 +93,7 @@ class App {
   
     setupARToolkitContext() {
       this.arToolkitContext = new THREEx.ArToolkitContext({
-        cameraParametersUrl: 'https://iondrimba.github.io/augmented-reality/public/data/camera_para.dat',
+        cameraParametersUrl: 'data/camera_para.dat',
         detectionMode: 'mono'
       });
   
@@ -106,6 +108,27 @@ class App {
       });
   
       this.arToolkitSource.init(() => {
+        console.log('AR CONTROLLER',this.arToolkitContext.arController);
+        if( this.arToolkitContext.arController !== null ){
+          this.arToolkitContext.arController.addEventListener('getMarker', (ev) => {
+            //console.log('SHOW IT ALLLLL',)
+            console.log('marker pos: ', ev.data.marker.pos);
+            if(!this.isRootAdded) {
+              this.isRootAdded = true;
+              this.scene.add(this.markerRoot);
+              this.oldPosX  = ev.data.marker.pos[0];
+              this.oldPosY = ev.data.marker.pos[1];
+            } else {
+              let diffX = ev.data.marker.pos[0] - this.oldPosX;
+              let diffY = ev.data.marker.pos[1] - this.oldPosY;
+              this.patterns[0].mesh.position.x += diffX/30;
+              this.patterns[0].mesh.position.y -= diffY/30;
+              //this.patterns[0].mesh.rotation.y -= .008;
+              this.oldPosX  = ev.data.marker.pos[0];
+              this.oldPosY = ev.data.marker.pos[1];
+            }
+          });
+        }
         this.onResize();
       });
     }
@@ -143,8 +166,8 @@ class App {
     const material = new THREE.MeshBasicMaterial( { map: texture , side: THREE.DoubleSide} )
     
     
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry( 3, 5, 5 ), material);
-    mesh.position.set(0, 2, 0);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry( 2, 2, 5  ), material);
+    mesh.position.set(0, 0, 0);
   
     return mesh;
     }
@@ -176,14 +199,17 @@ class App {
   
     mapMarkersWithMeshes() {
       this.patterns.map((pattern) => {
-        const markerRoot = new THREE.Group();
-        markerRoot.add(pattern.mesh);
-        markerRoot.name = 'LAME'
-        this.scene.add(markerRoot);
-  
-        var x = new THREEx.ArMarkerControls(this.arToolkitContext, markerRoot, {
-          type: 'pattern', patternUrl: './pattern1.patt'
+        this.markerRoot = new THREE.Group();
+        var x = new THREEx.ArMarkerControls(this.arToolkitContext, this.camera, {
+          type: 'pattern', patternUrl: 'pattern1.patt'
         })
+        this.markerRoot.add(pattern.mesh);
+        this.markerRoot.name = 'LAME'
+        //this.scene.add(this.markerRoot);
+  
+        /*var x = new THREEx.ArMarkerControls(this.arToolkitContext, this.markerRoot, {
+          type: 'pattern', patternUrl: './pattern1.patt'
+        })*/
         //markerRoot.add(pattern.mesh);
       });
     }
